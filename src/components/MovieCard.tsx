@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {FadeInDown} from 'react-native-reanimated';
 import type {MovieListItem} from '../types/tmdb';
 import {POSTER_BASE_URL} from '../api/movies';
 import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
@@ -28,6 +29,7 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(
     }, [movie.id, onRemove]);
 
     return (
+      <Animated.View entering={FadeInDown.duration(350).springify()}>
       <TouchableOpacity
         style={styles.card}
         onPress={handlePress}
@@ -62,6 +64,7 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(
           </TouchableOpacity>
         )}
       </TouchableOpacity>
+      </Animated.View>
     );
   },
 );

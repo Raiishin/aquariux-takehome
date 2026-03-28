@@ -17,7 +17,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {StackNavigationProp} from '@react-navigation/stack';
 import AppHeader from '../components/AppHeader';
 import MovieCard from '../components/MovieCard';
-import LoadingSpinner from '../components/LoadingSpinner';
+import SkeletonCard from '../components/SkeletonCard';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import {fetchMoviesByCategory, searchMoviesInCategory} from '../api/movies';
@@ -158,21 +158,21 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   }, [hasMore, handleLoadMore]);
 
   const ListEmpty = useMemo(() => {
-    if (isLoading || isError) return null;
+    if (isLoading) {
+      return (
+        <>
+          {Array.from({length: 5}).map((_, i) => (
+            <SkeletonCard key={i} />
+          ))}
+        </>
+      );
+    }
+    if (isError) return null;
     const msg = activeKeyword
       ? `No results for '${activeKeyword}' in this category.`
       : 'No movies found.';
     return <EmptyState message={msg} />;
   }, [isLoading, isError, activeKeyword]);
-
-  if (isLoading) {
-    return (
-      <View style={styles.container}>
-        <AppHeader />
-        <LoadingSpinner />
-      </View>
-    );
-  }
 
   if (isError) {
     return (

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Vibration,
   View,
 } from 'react-native';
 import { useQuery } from '@tanstack/react-query';
@@ -84,8 +85,10 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
     if (!detailsQuery.data) return;
     const movie = detailsQuery.data;
     if (inWatchlist) {
+      Vibration.vibrate(30);
       removeFromWatchlist(movieId);
     } else {
+      Vibration.vibrate([0, 40, 30, 40]);
       const watchlistMovie: WatchlistMovie = {
         id: movie.id,
         title: movie.title,

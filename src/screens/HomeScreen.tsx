@@ -103,6 +103,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     setVisibleCount(prev => prev + ITEMS_PER_PAGE);
   }, []);
 
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    setVisibleCount(ITEMS_PER_PAGE);
+    await refetch();
+    setIsRefreshing(false);
+  }, [refetch]);
+
   const handleCategoryChange = useCallback(
     (value: MovieCategory | null) => {
       if (value) {
@@ -248,6 +256,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps="handled"
+        refreshing={isRefreshing}
+        onRefresh={handleRefresh}
         ListFooterComponent={ListFooter}
         ListEmptyComponent={ListEmpty}
         contentContainerStyle={styles.listContent}

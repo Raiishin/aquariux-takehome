@@ -34,10 +34,8 @@ const SORT_OPTIONS: {label: string; value: SortOrder}[] = [
 
 const WatchlistScreen: React.FC = () => {
   const navigation = useNavigation<WatchlistNavigationProp>();
-  const {watchlist, removeFromWatchlist} = useWatchlistStore();
+  const {watchlist, removeFromWatchlist, sortOrder: filterOrder, sortDirection: direction, setSortOrder, setSortDirection} = useWatchlistStore();
 
-  const [filterOrder, setFilterOrder] = useState<SortOrder>('rating');
-  const [direction, setDirection] = useState<SortDirection>('desc');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const memberSince = useMemo(() => {
@@ -77,8 +75,8 @@ const WatchlistScreen: React.FC = () => {
   );
 
   const handleToggleDirection = useCallback(() => {
-    setDirection(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  }, []);
+    setSortDirection(direction === 'asc' ? 'desc' : 'asc');
+  }, [direction, setSortDirection]);
 
   const renderItem = useCallback<ListRenderItem<WatchlistMovie>>(
     ({item}) => (
@@ -131,7 +129,7 @@ const WatchlistScreen: React.FC = () => {
               value={filterOrder}
               setValue={(cb) => {
                 const val = typeof cb === 'function' ? cb(filterOrder) : cb;
-                if (val) setFilterOrder(val);
+                if (val) setSortOrder(val);
               }}
               items={SORT_OPTIONS}
               style={styles.filterDropdown}

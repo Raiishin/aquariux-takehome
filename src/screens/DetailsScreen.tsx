@@ -166,8 +166,8 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
     <View style={styles.container}>
       <AppHeader />
       <ScrollView bounces={false}>
-        {/* Header section */}
-        <View style={styles.headerBlock}>
+        {/* ── Upper block: cyan — title row + poster + metadata ── */}
+        <View style={styles.upperBlock}>
           {/* Row 1: back + title (centered) */}
           <View style={styles.titleRow}>
             <TouchableOpacity
@@ -216,8 +216,11 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
               </Text>
             </View>
           </View>
+        </View>
 
-          {/* Row 3: score + key creatives */}
+        {/* ── Lower block: dark navy — score + tagline + overview + button ── */}
+        <View style={styles.lowerBlock}>
+          {/* Row 3: score + key creatives (left-aligned) */}
           <View style={styles.scoreCreativesRow}>
             <UserScoreCircle score={movie.vote_average} />
             <View style={styles.creativesBlock}>
@@ -239,7 +242,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
           <Text style={styles.overviewHeading}>Overview</Text>
           <Text style={styles.overviewText}>{movie.overview}</Text>
 
-          {/* Watchlist button */}
+          {/* Watchlist button — narrow, outlined */}
           <TouchableOpacity
             style={[styles.watchlistBtn, inWatchlist && styles.watchlistBtnActive]}
             onPress={handleWatchlistToggle}
@@ -247,7 +250,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
             accessibilityLabel={
               inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'
             }>
-            <Text style={[styles.watchlistBtnText, inWatchlist && styles.watchlistBtnTextActive]}>
+            <Text style={styles.watchlistBtnText}>
               🔖 {inWatchlist ? 'Remove from Watchlist' : 'Add To Watchlist'}
             </Text>
           </TouchableOpacity>
@@ -273,7 +276,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  headerBlock: {
+  // ── Upper block (cyan) ─────────────────────────────────────────────────────
+  upperBlock: {
     backgroundColor: Colors.primary,
     padding: Spacing.lg,
   },
@@ -299,13 +303,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   movieTitle: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.xxl,
     fontWeight: '700',
     color: Colors.textOnDark,
     textAlign: 'center',
   },
   movieYear: {
-    fontSize: FontSize.lg,
+    fontSize: FontSize.xl,
     fontWeight: '400',
     color: 'rgba(255,255,255,0.8)',
     textAlign: 'center',
@@ -313,7 +317,6 @@ const styles = StyleSheet.create({
   posterMetaRow: {
     flexDirection: 'row',
     gap: Spacing.lg,
-    marginBottom: Spacing.lg,
   },
   poster: {
     width: 120,
@@ -343,21 +346,25 @@ const styles = StyleSheet.create({
   },
   certText: {
     color: Colors.textOnDark,
-    fontSize: FontSize.sm,
+    fontSize: FontSize.base,
     fontWeight: '600',
   },
   metaText: {
     color: Colors.textOnDark,
-    fontSize: FontSize.sm,
-    lineHeight: 18,
+    fontSize: FontSize.base,
+    lineHeight: 20,
   },
   metaLabel: {
     fontWeight: '700',
   },
+  // ── Lower block (dark navy) ────────────────────────────────────────────────
+  lowerBlock: {
+    backgroundColor: Colors.primaryDark,
+    padding: Spacing.lg,
+  },
   scoreCreativesRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'center',
     gap: Spacing.xl,
     marginBottom: Spacing.lg,
   },
@@ -382,29 +389,31 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.85)',
     fontSize: FontSize.base,
     marginBottom: Spacing.md,
-    textAlign: 'center',
   },
   overviewHeading: {
-    fontSize: FontSize.xl,
+    fontSize: FontSize.xxl,
     fontWeight: '700',
     color: Colors.textOnDark,
     marginBottom: Spacing.sm,
   },
   overviewText: {
-    fontSize: FontSize.base,
+    fontSize: FontSize.lg,
     color: Colors.textOnDark,
     lineHeight: 22,
     marginBottom: Spacing.lg,
   },
   watchlistBtn: {
-    backgroundColor: Colors.primaryDark,
-    paddingVertical: Spacing.md,
+    alignSelf: 'flex-start',
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: Colors.textOnDark,
+    paddingVertical: Spacing.sm,
     paddingHorizontal: Spacing.lg,
     borderRadius: Radius.md,
+    flexDirection: 'row',
     alignItems: 'center',
   },
   watchlistBtnActive: {
-    backgroundColor: Colors.primaryDark,
     opacity: 0.75,
   },
   watchlistBtnText: {
@@ -412,9 +421,7 @@ const styles = StyleSheet.create({
     fontSize: FontSize.base,
     fontWeight: '600',
   },
-  watchlistBtnTextActive: {
-    color: Colors.textOnDark,
-  },
+  // ── White section ──────────────────────────────────────────────────────────
   whiteSection: {
     backgroundColor: Colors.surface,
     paddingVertical: Spacing.lg,

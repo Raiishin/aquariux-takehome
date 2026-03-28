@@ -1,14 +1,17 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
+import Svg, {Circle} from 'react-native-svg';
 import {Colors} from '../theme/tokens';
 
 interface UserScoreCircleProps {
   score: number;
 }
 
-const SIZE = 58;
-const HALF = SIZE / 2;
-const INNER = 44;
+const SIZE = 64;
+const CENTER = SIZE / 2;
+const STROKE_WIDTH = 5;
+const RADIUS = CENTER - STROKE_WIDTH / 2;
+const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
   const percentage = Math.round(score * 10);
@@ -19,41 +22,38 @@ const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
       ? Colors.scoreArcYellow
       : Colors.scoreArcRed;
 
-  // Two-half rotation technique:
-  // Right half container clips the right side of a full circle.
-  // The circle inside rotates around its own center, which coincides with the
-  // outer circle's center — so no custom transformOrigin needed.
-  const rightDeg = percentage <= 50 ? percentage * 3.6 : 180;
-  const leftDeg = percentage > 50 ? (percentage - 50) * 3.6 : 0;
-  const leftColor = percentage > 50 ? arcColor : Colors.primaryDark;
+  const strokeDashoffset = CIRCUMFERENCE * (1 - percentage / 100);
 
   return (
     <View style={styles.wrapper}>
-      <View style={styles.outerCircle}>
-        {/* Right half — rotates to fill 0–50% */}
-        <View style={styles.rightHalfContainer}>
-          <View
-            style={[
-              styles.halfCircle,
-              styles.rightHalfCircle,
-              {backgroundColor: arcColor},
-              {transform: [{rotate: `${rightDeg}deg`}]},
-            ]}
+      <View style={styles.circleContainer}>
+        <Svg width={SIZE} height={SIZE}>
+          {/* Dark background fill + track */}
+          <Circle
+            cx={CENTER}
+            cy={CENTER}
+            r={RADIUS}
+            fill={Colors.primaryDark}
+            stroke={Colors.primaryDark}
+            strokeWidth={STROKE_WIDTH}
           />
-        </View>
-        {/* Left half — rotates to fill 50–100% */}
-        <View style={styles.leftHalfContainer}>
-          <View
-            style={[
-              styles.halfCircle,
-              styles.leftHalfCircle,
-              {backgroundColor: leftColor},
-              {transform: [{rotate: `${leftDeg}deg`}]},
-            ]}
+          {/* Coloured arc — starts from 12 o'clock, fills clockwise */}
+          <Circle
+            cx={CENTER}
+            cy={CENTER}
+            r={RADIUS}
+            fill="none"
+            stroke={arcColor}
+            strokeWidth={STROKE_WIDTH}
+            strokeDasharray={CIRCUMFERENCE}
+            strokeDashoffset={strokeDashoffset}
+            strokeLinecap="round"
+            rotation={-90}
+            origin={`${CENTER}, ${CENTER}`}
           />
-        </View>
-        {/* Inner circle creates the donut effect */}
-        <View style={styles.innerCircle}>
+        </Svg>
+        {/* Percentage text overlaid on the SVG */}
+        <View style={styles.textOverlay}>
           <View style={styles.textRow}>
             <Text style={styles.number}>{percentage}</Text>
             <Text style={styles.percent}>%</Text>
@@ -69,49 +69,16 @@ const styles = StyleSheet.create({
   wrapper: {
     alignItems: 'center',
   },
-  outerCircle: {
+  circleContainer: {
     width: SIZE,
     height: SIZE,
-    borderRadius: HALF,
-    backgroundColor: Colors.primaryDark,
-    overflow: 'hidden',
   },
-  rightHalfContainer: {
+  textOverlay: {
     position: 'absolute',
-    right: 0,
     top: 0,
-    width: HALF,
-    height: SIZE,
-    overflow: 'hidden',
-  },
-  leftHalfContainer: {
-    position: 'absolute',
     left: 0,
-    top: 0,
-    width: HALF,
-    height: SIZE,
-    overflow: 'hidden',
-  },
-  halfCircle: {
-    position: 'absolute',
     width: SIZE,
     height: SIZE,
-    borderRadius: HALF,
-  },
-  rightHalfCircle: {
-    right: 0,
-  },
-  leftHalfCircle: {
-    left: 0,
-  },
-  innerCircle: {
-    position: 'absolute',
-    top: (SIZE - INNER) / 2,
-    left: (SIZE - INNER) / 2,
-    width: INNER,
-    height: INNER,
-    borderRadius: INNER / 2,
-    backgroundColor: Colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
   },

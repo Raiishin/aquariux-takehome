@@ -168,7 +168,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
       <ScrollView bounces={false}>
         {/* Header section */}
         <View style={styles.headerBlock}>
-          {/* Row 1: back + title */}
+          {/* Row 1: back + title (centered) */}
           <View style={styles.titleRow}>
             <TouchableOpacity
               onPress={handleBack}
@@ -183,6 +183,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
                 <Text style={styles.movieYear}> ({year})</Text>
               ) : null}
             </View>
+            <View style={styles.backBtn} />
           </View>
 
           {/* Row 2: poster + metadata */}
@@ -294,17 +295,20 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    alignItems: 'baseline',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   movieTitle: {
     fontSize: FontSize.xl,
     fontWeight: '700',
     color: Colors.textOnDark,
+    textAlign: 'center',
   },
   movieYear: {
     fontSize: FontSize.lg,
     fontWeight: '400',
     color: 'rgba(255,255,255,0.8)',
+    textAlign: 'center',
   },
   posterMetaRow: {
     flexDirection: 'row',
@@ -353,6 +357,7 @@ const styles = StyleSheet.create({
   scoreCreativesRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
+    justifyContent: 'center',
     gap: Spacing.xl,
     marginBottom: Spacing.lg,
   },

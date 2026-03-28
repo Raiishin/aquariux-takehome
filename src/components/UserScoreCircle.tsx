@@ -6,21 +6,56 @@ interface UserScoreCircleProps {
   score: number;
 }
 
+const SIZE = 58;
+const HALF = SIZE / 2;
+const INNER = 44;
+
 const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
   const percentage = Math.round(score * 10);
-  const borderColor =
+  const arcColor =
     percentage >= 70
       ? Colors.scoreArcGreen
       : percentage >= 40
       ? Colors.scoreArcYellow
       : Colors.scoreArcRed;
 
+  // Two-half rotation technique:
+  // Right half container clips the right side of a full circle.
+  // The circle inside rotates around its own center, which coincides with the
+  // outer circle's center — so no custom transformOrigin needed.
+  const rightDeg = percentage <= 50 ? percentage * 3.6 : 180;
+  const leftDeg = percentage > 50 ? (percentage - 50) * 3.6 : 0;
+  const leftColor = percentage > 50 ? arcColor : Colors.primaryDark;
+
   return (
     <View style={styles.wrapper}>
-      <View style={[styles.circle, {borderColor}]}>
-        <View style={styles.textRow}>
-          <Text style={styles.number}>{percentage}</Text>
-          <Text style={styles.percent}>%</Text>
+      <View style={styles.outerCircle}>
+        {/* Right half — rotates to fill 0–50% */}
+        <View style={styles.rightHalfContainer}>
+          <View
+            style={[
+              styles.halfCircle,
+              {backgroundColor: arcColor, right: 0},
+              {transform: [{rotate: `${rightDeg}deg`}]},
+            ]}
+          />
+        </View>
+        {/* Left half — rotates to fill 50–100% */}
+        <View style={styles.leftHalfContainer}>
+          <View
+            style={[
+              styles.halfCircle,
+              {backgroundColor: leftColor, left: 0},
+              {transform: [{rotate: `${leftDeg}deg`}]},
+            ]}
+          />
+        </View>
+        {/* Inner circle creates the donut effect */}
+        <View style={styles.innerCircle}>
+          <View style={styles.textRow}>
+            <Text style={styles.number}>{percentage}</Text>
+            <Text style={styles.percent}>%</Text>
+          </View>
         </View>
       </View>
       <Text style={styles.label}>User Score</Text>
@@ -32,12 +67,43 @@ const styles = StyleSheet.create({
   wrapper: {
     alignItems: 'center',
   },
-  circle: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
+  outerCircle: {
+    width: SIZE,
+    height: SIZE,
+    borderRadius: HALF,
     backgroundColor: Colors.primaryDark,
-    borderWidth: 3,
+    overflow: 'hidden',
+  },
+  rightHalfContainer: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    width: HALF,
+    height: SIZE,
+    overflow: 'hidden',
+  },
+  leftHalfContainer: {
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: HALF,
+    height: SIZE,
+    overflow: 'hidden',
+  },
+  halfCircle: {
+    position: 'absolute',
+    width: SIZE,
+    height: SIZE,
+    borderRadius: HALF,
+  },
+  innerCircle: {
+    position: 'absolute',
+    top: (SIZE - INNER) / 2,
+    left: (SIZE - INNER) / 2,
+    width: INNER,
+    height: INNER,
+    borderRadius: INNER / 2,
+    backgroundColor: Colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
   },

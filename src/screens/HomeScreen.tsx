@@ -9,8 +9,8 @@ import {
   View,
 } from 'react-native';
 
-const ChevronRight = () => <Text style={{fontSize: 16, color: '#6B7280'}}>{'›'}</Text>;
-const ChevronDown = () => <Text style={{fontSize: 16, color: '#6B7280'}}>{'⌄'}</Text>;
+const ChevronRight = () => <Text style={{fontSize: 22, fontWeight: '700', color: '#111827'}}>{'›'}</Text>;
+const ChevronDown = () => <Text style={{fontSize: 22, fontWeight: '700', color: '#111827'}}>{'⌄'}</Text>;
 import {useQuery} from '@tanstack/react-query';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -56,6 +56,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
+  const [sortDisplayValue, setSortDisplayValue] = useState<SortOrder | null>(null);
 
   const {data, isLoading, isError, refetch} = useQuery({
     queryKey: ['movies', category, activeKeyword],
@@ -106,7 +107,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const handleSortChange = useCallback(
     (value: SortOrder | null) => {
-      if (value) setSortOrder(value);
+      if (value) {
+        setSortDisplayValue(value);
+        setSortOrder(value);
+      }
     },
     [setSortOrder],
   );
@@ -176,70 +180,71 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <AppHeader />
+      {/* Controls live outside FlatList so dropdowns can overlay list items */}
+      <View style={styles.controls}>
+        <View style={{zIndex: 3000}}>
+          <DropDownPicker
+            open={categoryOpen}
+            setOpen={handleCategoryOpen}
+            value={category}
+            setValue={(cb) => {
+              const val = typeof cb === 'function' ? cb(category) : cb;
+              handleCategoryChange(val);
+            }}
+            items={CATEGORIES}
+            placeholder="Select Category"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            selectedItemContainerStyle={styles.selectedItem}
+            selectedItemLabelStyle={styles.selectedItemLabel}
+            showTickIcon={false}
+            ArrowDownIconComponent={ChevronRight}
+            ArrowUpIconComponent={ChevronDown}
+          />
+        </View>
+        <View style={{zIndex: 2000}}>
+          <DropDownPicker
+            open={sortOpen}
+            setOpen={handleSortOpen}
+            value={sortDisplayValue}
+            setValue={(cb) => {
+              const val = typeof cb === 'function' ? cb(sortDisplayValue) : cb;
+              handleSortChange(val);
+            }}
+            items={SORT_OPTIONS}
+            placeholder="Sort By"
+            style={styles.dropdown}
+            dropDownContainerStyle={styles.dropdownContainer}
+            selectedItemContainerStyle={styles.selectedItem}
+            selectedItemLabelStyle={styles.selectedItemLabel}
+            showTickIcon={false}
+            ArrowDownIconComponent={ChevronRight}
+            ArrowUpIconComponent={ChevronDown}
+          />
+        </View>
+        <TextInput
+          style={styles.searchInput}
+          placeholder="Search..."
+          placeholderTextColor={Colors.placeholder}
+          value={searchInput}
+          onChangeText={setSearchInput}
+          returnKeyType="search"
+          onSubmitEditing={handleSearch}
+          accessibilityLabel="Search movies"
+        />
+        <TouchableOpacity
+          style={styles.searchBtn}
+          onPress={handleSearch}
+          accessibilityRole="button"
+          accessibilityLabel="Search">
+          <Text style={styles.searchBtnText}>Search</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={visibleMovies}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <View style={styles.controls}>
-            <View style={{zIndex: 3000}}>
-              <DropDownPicker
-                open={categoryOpen}
-                setOpen={handleCategoryOpen}
-                value={category}
-                setValue={(cb) => {
-                  const val = typeof cb === 'function' ? cb(category) : cb;
-                  handleCategoryChange(val);
-                }}
-                items={CATEGORIES}
-                placeholder="Select Category"
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
-                selectedItemContainerStyle={styles.selectedItem}
-                selectedItemLabelStyle={styles.selectedItemLabel}
-                ArrowDownIconComponent={ChevronRight}
-                ArrowUpIconComponent={ChevronDown}
-              />
-            </View>
-            <View style={{zIndex: 2000}}>
-              <DropDownPicker
-                open={sortOpen}
-                setOpen={handleSortOpen}
-                value={sortOrder}
-                setValue={(cb) => {
-                  const val = typeof cb === 'function' ? cb(sortOrder) : cb;
-                  handleSortChange(val);
-                }}
-                items={SORT_OPTIONS}
-                placeholder="Sort By"
-                style={styles.dropdown}
-                dropDownContainerStyle={styles.dropdownContainer}
-                selectedItemContainerStyle={styles.selectedItem}
-                selectedItemLabelStyle={styles.selectedItemLabel}
-                ArrowDownIconComponent={ChevronRight}
-                ArrowUpIconComponent={ChevronDown}
-              />
-            </View>
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search..."
-              placeholderTextColor={Colors.placeholder}
-              value={searchInput}
-              onChangeText={setSearchInput}
-              returnKeyType="search"
-              onSubmitEditing={handleSearch}
-              accessibilityLabel="Search movies"
-            />
-            <TouchableOpacity
-              style={styles.searchBtn}
-              onPress={handleSearch}
-              accessibilityRole="button"
-              accessibilityLabel="Search">
-              <Text style={styles.searchBtnText}>Search</Text>
-            </TouchableOpacity>
-          </View>
-        }
         ListFooterComponent={ListFooter}
         ListEmptyComponent={ListEmpty}
         contentContainerStyle={styles.listContent}
@@ -257,6 +262,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.lg,
     paddingVertical: Spacing.md,
     gap: Spacing.sm,
+    zIndex: 10,
+    elevation: 10,
+    backgroundColor: Colors.background,
   },
   dropdown: {
     borderColor: Colors.border,

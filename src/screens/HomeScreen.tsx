@@ -9,8 +9,9 @@ import {
   View,
 } from 'react-native';
 
-const ChevronRight = () => <Text style={{fontSize: 22, fontWeight: '700', color: '#111827'}}>{'›'}</Text>;
-const ChevronDown = () => <Text style={{fontSize: 22, fontWeight: '700', color: '#111827'}}>{'⌄'}</Text>;
+const ChevronRight = () => <Text style={chevronStyle}>{'›'}</Text>;
+const ChevronDown = () => <Text style={chevronStyle}>{'⌄'}</Text>;
+const chevronStyle = {fontSize: 22, fontWeight: '700' as const, color: '#111827'};
 import {useQuery} from '@tanstack/react-query';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {StackNavigationProp} from '@react-navigation/stack';
@@ -115,15 +116,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     [setSortOrder],
   );
 
-  const handleCategoryOpen = useCallback((open: boolean) => {
-    setCategoryOpen(open);
-    if (open) setSortOpen(false);
-  }, []);
-
-  const handleSortOpen = useCallback((open: boolean) => {
-    setSortOpen(open);
-    if (open) setCategoryOpen(false);
-  }, []);
+  const handleCategoryOpen = useCallback(() => setSortOpen(false), []);
+  const handleSortOpen = useCallback(() => setCategoryOpen(false), []);
 
   const renderItem = useCallback<ListRenderItem<MovieListItem>>(
     ({item}) => <MovieCard movie={item} onPress={handleMoviePress} />,
@@ -182,10 +176,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
       <AppHeader />
       {/* Controls live outside FlatList so dropdowns can overlay list items */}
       <View style={styles.controls}>
-        <View style={{zIndex: 3000}}>
+        <View style={styles.categoryDropdownWrapper}>
           <DropDownPicker
             open={categoryOpen}
-            setOpen={handleCategoryOpen}
+            setOpen={setCategoryOpen}
+            onOpen={handleCategoryOpen}
             value={category}
             setValue={(cb) => {
               const val = typeof cb === 'function' ? cb(category) : cb;
@@ -202,10 +197,11 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             ArrowUpIconComponent={ChevronDown}
           />
         </View>
-        <View style={{zIndex: 2000}}>
+        <View style={styles.sortDropdownWrapper}>
           <DropDownPicker
             open={sortOpen}
-            setOpen={handleSortOpen}
+            setOpen={setSortOpen}
+            onOpen={handleSortOpen}
             value={sortDisplayValue}
             setValue={(cb) => {
               const val = typeof cb === 'function' ? cb(sortDisplayValue) : cb;
@@ -317,6 +313,12 @@ const styles = StyleSheet.create({
   },
   listContent: {
     paddingBottom: Spacing.xxl,
+  },
+  categoryDropdownWrapper: {
+    zIndex: 3000,
+  },
+  sortDropdownWrapper: {
+    zIndex: 2000,
   },
 });
 

@@ -35,7 +35,8 @@ const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
           <View
             style={[
               styles.halfCircle,
-              {backgroundColor: arcColor, right: 0},
+              styles.rightHalfCircle,
+              {backgroundColor: arcColor},
               {transform: [{rotate: `${rightDeg}deg`}]},
             ]}
           />
@@ -45,7 +46,8 @@ const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
           <View
             style={[
               styles.halfCircle,
-              {backgroundColor: leftColor, left: 0},
+              styles.leftHalfCircle,
+              {backgroundColor: leftColor},
               {transform: [{rotate: `${leftDeg}deg`}]},
             ]}
           />
@@ -95,6 +97,12 @@ const styles = StyleSheet.create({
     width: SIZE,
     height: SIZE,
     borderRadius: HALF,
+  },
+  rightHalfCircle: {
+    right: 0,
+  },
+  leftHalfCircle: {
+    left: 0,
   },
   innerCircle: {
     position: 'absolute',

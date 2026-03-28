@@ -16,7 +16,7 @@ import MovieCard from '../components/MovieCard';
 import EmptyState from '../components/EmptyState';
 import {useWatchlistStore} from '../store/useWatchlistStore';
 import {sortMovies} from '../utils/sorting';
-import type {SortOrder, SortDirection, WatchlistMovie} from '../types/tmdb';
+import type {MovieListItem, SortOrder, SortDirection, WatchlistMovie} from '../types/tmdb';
 import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
 import type {RootTabParamList} from '../navigation/RootNavigator';
 import type {HomeStackParamList} from '../navigation/HomeStack';
@@ -60,7 +60,7 @@ const WatchlistScreen: React.FC = () => {
   }, [navigation]);
 
   const handleMoviePress = useCallback(
-    (movie: WatchlistMovie) => {
+    (movie: MovieListItem) => {
       navigation.navigate('HomeTab', {
         screen: 'Details',
         params: {movieId: movie.id, movieTitle: movie.title},
@@ -146,7 +146,7 @@ const WatchlistScreen: React.FC = () => {
                     textStyle={styles.filterDropdownText}
                     selectedItemContainerStyle={styles.filterSelectedItem}
                     selectedItemLabelStyle={styles.filterSelectedItemLabel}
-                    containerStyle={{flex: 1}}
+                    containerStyle={styles.filterDropdownContainer2}
                   />
                 </View>
                 <Text style={styles.orderLabel}>Order:</Text>
@@ -250,6 +250,9 @@ const styles = StyleSheet.create({
   dropdownWrapper: {
     flex: 1,
     zIndex: 1000,
+  },
+  filterDropdownContainer2: {
+    flex: 1,
   },
   filterDropdown: {
     borderWidth: 0,

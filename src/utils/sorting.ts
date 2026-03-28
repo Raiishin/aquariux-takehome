@@ -1,10 +1,10 @@
 import type {MovieListItem, SortOrder, SortDirection} from '../types/tmdb';
 
-export function sortMovies(
-  movies: MovieListItem[],
+export function sortMovies<T extends MovieListItem>(
+  movies: T[],
   sortOrder: SortOrder,
   direction: SortDirection,
-): MovieListItem[] {
+): T[] {
   const sorted = [...movies];
   sorted.sort((a, b) => {
     switch (sortOrder) {

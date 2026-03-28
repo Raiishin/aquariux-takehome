@@ -31,7 +31,7 @@ A React Native mobile app for browsing movies, viewing detailed information, and
 - **Pull-to-refresh** — swipe down on the movie list to refetch
 - **Haptic feedback** — vibration pattern on add/remove from watchlist
 - **Animated card entrance** — each movie card fades and slides in using `react-native-reanimated`
-- **Persistent preferences** — category, sort order, and watchlist sort survive app restarts via AsyncStorage
+- **Persistent preferences** — category, sort order, and watchlist sort survive app restarts via MMKV
 - **Offline-resilient** — React Query caches responses; stale data is served while revalidating
 
 ---
@@ -79,14 +79,14 @@ React Query (caching, stale-while-revalidate, retry)
     │
     ├──▶ Screen components (HomeScreen, DetailsScreen)
     │
-Zustand stores ◀──▶ AsyncStorage (persistence)
+Zustand stores ◀──▶ MMKV (synchronous persistence)
     │
     └──▶ WatchlistScreen, DetailsScreen (watchlist state)
 ```
 
 ### State Management
 
-Two Zustand stores, both backed by AsyncStorage:
+Two Zustand stores, both backed by MMKV. Reads and writes are **synchronous** — no async/await overhead on the storage layer, making hydration instant on app launch.
 
 **`usePreferencesStore`**
 | Field | Default | Persisted |
@@ -101,9 +101,9 @@ Two Zustand stores, both backed by AsyncStorage:
 **`useWatchlistStore`**
 | Field | Default | Persisted |
 |---|---|---|
-| `watchlist` | `[]` | Yes (`@moviedb_watchlist`) |
-| `sortOrder` | `rating` | Yes (`@moviedb_watchlist_sort`) |
-| `sortDirection` | `desc` | Yes (`@moviedb_watchlist_sort`) |
+| `watchlist` | `[]` | Yes (`moviedb_watchlist`) |
+| `sortOrder` | `rating` | Yes (`moviedb_watchlist_sort`) |
+| `sortDirection` | `desc` | Yes (`moviedb_watchlist_sort`) |
 
 Both stores expose a `hydrate()` action called once in `App.tsx` via a `StoreHydrator` component before any screen renders.
 
@@ -173,7 +173,8 @@ React Query retries failed requests up to 2 times with exponential backoff (1 s 
 | `@tanstack/react-query` | 5.95.2 | Server state, caching, retry |
 | `axios` | 1.14.0 | HTTP client |
 | `zustand` | 5.0.12 | Client state management |
-| `@react-native-async-storage/async-storage` | 2.2.0 | Local persistence |
+| `react-native-mmkv` | 4.3.0 | Synchronous local persistence (replaces AsyncStorage) |
+| `react-native-nitro-modules` | 0.35.2 | NitroModules runtime required by react-native-mmkv v4 |
 | `react-native-reanimated` | 4.3.0 | Animations (skeleton shimmer, card entrance) |
 | `react-native-svg` | 15.15.4 | SVG icons and score arc |
 | `react-native-dropdown-picker` | 5.4.6 | Category and sort dropdowns |
@@ -208,6 +209,7 @@ src/
 │   ├── HomeScreen.tsx      # Browse, search, sort movies
 │   └── WatchlistScreen.tsx # Personal saved movies list
 ├── store/
+│   ├── storage.ts              # Shared MMKV instance + typed helpers
 │   ├── usePreferencesStore.ts  # Category, sort prefs + persistence
 │   └── useWatchlistStore.ts    # Watchlist + sort + persistence
 ├── theme/
@@ -277,7 +279,7 @@ The token is loaded at build time via `react-native-dotenv` and injected as a Be
 | 1 | **Hardcoded user profile** | TMDB Read Access Token doesn't provide an authenticated user session; username and avatar are static placeholders |
 | 2 | **Client-side search** | TMDB's `/search/movie` has no category filter; fetching the category list then filtering locally keeps results scoped correctly |
 | 3 | **Load More pagination** | Slices the already-fetched page of results (5 at a time) rather than fetching additional API pages — keeps the UX simple for the current data size |
-| 4 | **Local-only watchlist** | Stored in AsyncStorage only; not synced to TMDB's server-side watchlist API (which requires full OAuth) |
+| 4 | **Local-only watchlist** | Stored in MMKV only; not synced to TMDB's server-side watchlist API (which requires full OAuth) |
 | 5 | **SVG icons via react-native-svg** | Avoids native linking setup required by vector-icon libraries; SVG paths taken directly from Figma |
 | 6 | **`navigation.push()` for recommendations** | Allows navigating deeper into a recommendation chain while preserving the back stack |
 | 7 | **4 parallel queries on Details screen** | Details, credits, certification, and recommendations are fetched simultaneously to minimise perceived load time |

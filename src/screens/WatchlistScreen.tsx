@@ -99,70 +99,67 @@ const WatchlistScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <AppHeader />
+      {/* Profile block */}
+      <View style={styles.profileBlock}>
+        <TouchableOpacity
+          style={styles.backBtn}
+          onPress={handleBack}
+          accessibilityRole="button"
+          accessibilityLabel="Go to Home">
+          <Text style={styles.backChevron}>‹</Text>
+        </TouchableOpacity>
+        <View style={styles.profileRow}>
+          <View style={styles.avatar}>
+            <Text style={styles.avatarText}>J</Text>
+          </View>
+          <View style={styles.profileInfo}>
+            <Text style={styles.username}>John Lee</Text>
+            <Text style={styles.memberSince}>Member since {memberSince}</Text>
+          </View>
+        </View>
+      </View>
+
+      {/* Watchlist controls — outside FlatList so dropdown overlays list */}
+      <View style={styles.bodyHeader}>
+        <Text style={styles.watchlistTitle}>My Watchlist</Text>
+        <View style={styles.filterRow}>
+          <Text style={styles.filterLabel}>Filter by:</Text>
+          <View style={styles.dropdownWrapper}>
+            <DropDownPicker
+              open={dropdownOpen}
+              setOpen={setDropdownOpen}
+              value={filterOrder}
+              setValue={(cb) => {
+                const val = typeof cb === 'function' ? cb(filterOrder) : cb;
+                if (val) setFilterOrder(val);
+              }}
+              items={SORT_OPTIONS}
+              style={styles.filterDropdown}
+              dropDownContainerStyle={styles.filterDropdownContainer}
+              textStyle={styles.filterDropdownText}
+              selectedItemContainerStyle={styles.filterSelectedItem}
+              selectedItemLabelStyle={styles.filterSelectedItemLabel}
+              containerStyle={styles.filterDropdownContainer2}
+            />
+          </View>
+          <Text style={styles.orderLabel}>Order:</Text>
+          <TouchableOpacity
+            style={styles.orderBtn}
+            onPress={handleToggleDirection}
+            accessibilityRole="button"
+            accessibilityLabel={`Sort direction: ${direction === 'asc' ? 'ascending' : 'descending'}`}>
+            <Text style={styles.orderBtnText}>
+              {direction === 'asc' ? '↑' : '↓'}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+
       <FlatList
         data={sortedWatchlist}
         renderItem={renderItem}
         keyExtractor={keyExtractor}
         keyboardShouldPersistTaps="handled"
-        ListHeaderComponent={
-          <>
-            {/* Profile block */}
-            <View style={styles.profileBlock}>
-              <TouchableOpacity
-                style={styles.backBtn}
-                onPress={handleBack}
-                accessibilityRole="button"
-                accessibilityLabel="Go to Home">
-                <Text style={styles.backChevron}>‹</Text>
-              </TouchableOpacity>
-              <View style={styles.profileRow}>
-                <View style={styles.avatar}>
-                  <Text style={styles.avatarText}>J</Text>
-                </View>
-                <View style={styles.profileInfo}>
-                  <Text style={styles.username}>John Lee</Text>
-                  <Text style={styles.memberSince}>Member since {memberSince}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Watchlist controls */}
-            <View style={styles.bodyHeader}>
-              <Text style={styles.watchlistTitle}>My Watchlist</Text>
-              <View style={styles.filterRow}>
-                <Text style={styles.filterLabel}>Filter by:</Text>
-                <View style={styles.dropdownWrapper}>
-                  <DropDownPicker
-                    open={dropdownOpen}
-                    setOpen={setDropdownOpen}
-                    value={filterOrder}
-                    setValue={(cb) => {
-                      const val = typeof cb === 'function' ? cb(filterOrder) : cb;
-                      if (val) setFilterOrder(val);
-                    }}
-                    items={SORT_OPTIONS}
-                    style={styles.filterDropdown}
-                    dropDownContainerStyle={styles.filterDropdownContainer}
-                    textStyle={styles.filterDropdownText}
-                    selectedItemContainerStyle={styles.filterSelectedItem}
-                    selectedItemLabelStyle={styles.filterSelectedItemLabel}
-                    containerStyle={styles.filterDropdownContainer2}
-                  />
-                </View>
-                <Text style={styles.orderLabel}>Order:</Text>
-                <TouchableOpacity
-                  style={styles.orderBtn}
-                  onPress={handleToggleDirection}
-                  accessibilityRole="button"
-                  accessibilityLabel={`Sort direction: ${direction === 'asc' ? 'ascending' : 'descending'}`}>
-                  <Text style={styles.orderBtnText}>
-                    {direction === 'asc' ? '↑' : '↓'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          </>
-        }
         ListEmptyComponent={
           <EmptyState
             message="Your watchlist is empty"
@@ -228,7 +225,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     borderBottomWidth: 1,
     borderBottomColor: Colors.border,
-    zIndex: 1000,
+    zIndex: 10,
+    elevation: 10,
   },
   watchlistTitle: {
     fontSize: FontSize.xl,

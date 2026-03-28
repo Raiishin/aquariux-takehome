@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import type {CastMember} from '../types/tmdb';
 import {PROFILE_BASE_URL} from '../api/movies';
-import {Colors, FontSize, Spacing} from '../theme/tokens';
+import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
 
 interface CastCardProps {
   member: CastMember;
@@ -11,24 +11,28 @@ interface CastCardProps {
 const CastCard: React.FC<CastCardProps> = React.memo(({member}) => {
   return (
     <View style={styles.card}>
-      {member.profile_path ? (
-        <Image
-          source={{uri: `${PROFILE_BASE_URL}${member.profile_path}`}}
-          style={styles.photo}
-        />
-      ) : (
-        <View style={[styles.photo, styles.photoPlaceholder]}>
-          <Text style={styles.photoPlaceholderText}>
-            {member.name.charAt(0).toUpperCase()}
-          </Text>
-        </View>
-      )}
-      <Text style={styles.name} numberOfLines={2}>
-        {member.name}
-      </Text>
-      <Text style={styles.character} numberOfLines={2}>
-        {member.character}
-      </Text>
+      <View style={styles.photoWrapper}>
+        {member.profile_path ? (
+          <Image
+            source={{uri: `${PROFILE_BASE_URL}${member.profile_path}`}}
+            style={styles.photo}
+          />
+        ) : (
+          <View style={[styles.photo, styles.photoPlaceholder]}>
+            <Text style={styles.photoPlaceholderText}>
+              {member.name.charAt(0).toUpperCase()}
+            </Text>
+          </View>
+        )}
+      </View>
+      <View style={styles.textBlock}>
+        <Text style={styles.name} numberOfLines={2}>
+          {member.name}
+        </Text>
+        <Text style={styles.character} numberOfLines={2}>
+          {member.character}
+        </Text>
+      </View>
     </View>
   );
 });
@@ -37,15 +41,26 @@ CastCard.displayName = 'CastCard';
 
 const styles = StyleSheet.create({
   card: {
-    width: 100,
+    width: 138,
     marginHorizontal: Spacing.sm,
-    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 4,
+  },
+  photoWrapper: {
+    borderTopLeftRadius: Radius.md,
+    borderTopRightRadius: Radius.md,
+    overflow: 'hidden',
   },
   photo: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: Spacing.sm,
+    width: 138,
+    height: 175,
   },
   photoPlaceholder: {
     backgroundColor: Colors.avatarBg,
@@ -53,20 +68,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   photoPlaceholderText: {
-    fontSize: 28,
+    fontSize: 40,
     fontWeight: '700',
     color: Colors.textOnPrimary,
   },
+  textBlock: {
+    padding: Spacing.sm,
+  },
   name: {
-    fontSize: FontSize.xs + 1,
+    fontSize: FontSize.sm,
     fontWeight: '700',
     color: Colors.textPrimary,
-    textAlign: 'center',
   },
   character: {
     fontSize: FontSize.xs,
     color: Colors.textSecondary,
-    textAlign: 'center',
     marginTop: 2,
   },
 });

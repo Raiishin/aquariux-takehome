@@ -15,6 +15,7 @@ export const Colors = {
   scoreArcRed: '#DB2360',
   avatarBg: '#7C3AED',
   removeButton: '#9CA3AF',
+  detailsTop: '#0099c2',
 };
 
 export const Spacing = {

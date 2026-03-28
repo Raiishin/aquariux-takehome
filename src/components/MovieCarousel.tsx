@@ -74,10 +74,12 @@ export const RecommendedCarousel: React.FC<RecommendedCarouselProps> = ({
               <Text style={styles.recPosterPlaceholderText}>🎬</Text>
             </View>
           )}
-          <Text style={styles.recTitle} numberOfLines={2}>
-            {item.title}
-          </Text>
-          <Text style={styles.recScore}>{percentage}%</Text>
+          <View style={styles.recMeta}>
+            <Text style={styles.recTitle} numberOfLines={2}>
+              {item.title}
+            </Text>
+            <Text style={styles.recScore}>{percentage}%</Text>
+          </View>
         </TouchableOpacity>
       );
     },
@@ -124,15 +126,20 @@ const styles = StyleSheet.create({
     fontSize: FontSize.base,
   },
   recCard: {
-    width: 110,
+    width: 160,
     marginHorizontal: Spacing.sm,
-    alignItems: 'center',
+    backgroundColor: Colors.surface,
+    borderRadius: Radius.md,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 3,
   },
   recPoster: {
-    width: 110,
-    height: 160,
-    borderRadius: Radius.md,
-    marginBottom: Spacing.sm,
+    width: 160,
+    height: 240,
   },
   recPosterPlaceholder: {
     backgroundColor: Colors.border,
@@ -142,16 +149,22 @@ const styles = StyleSheet.create({
   recPosterPlaceholderText: {
     fontSize: 24,
   },
+  recMeta: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    padding: Spacing.sm,
+    gap: Spacing.sm,
+  },
   recTitle: {
+    flex: 1,
     fontSize: FontSize.sm,
     fontWeight: '700',
     color: Colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: 2,
   },
   recScore: {
     fontSize: FontSize.sm,
+    fontWeight: '600',
     color: Colors.textSecondary,
-    textAlign: 'center',
+    flexShrink: 0,
   },
 });

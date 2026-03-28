@@ -1,7 +1,7 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import Svg, {Circle} from 'react-native-svg';
-import {Colors} from '../theme/tokens';
+import {Colors, FontSize} from '../theme/tokens';
 
 interface UserScoreCircleProps {
   score: number;
@@ -67,7 +67,7 @@ const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
 
 const styles = StyleSheet.create({
   wrapper: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
   circleContainer: {
     width: SIZE,
@@ -98,7 +98,8 @@ const styles = StyleSheet.create({
     marginTop: 3,
   },
   label: {
-    fontSize: 10,
+    fontSize: FontSize.sm,
+    fontWeight: '700',
     color: Colors.textOnDark,
     marginTop: 4,
     textAlign: 'center',

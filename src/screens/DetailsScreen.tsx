@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import {
   Image,
   ScrollView,
@@ -7,14 +7,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {useQuery} from '@tanstack/react-query';
-import {StackNavigationProp} from '@react-navigation/stack';
-import {RouteProp} from '@react-navigation/native';
+import { useQuery } from '@tanstack/react-query';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RouteProp } from '@react-navigation/native';
 import AppHeader from '../components/AppHeader';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import UserScoreCircle from '../components/UserScoreCircle';
-import {CastCarousel, RecommendedCarousel} from '../components/MovieCarousel';
+import { CastCarousel, RecommendedCarousel } from '../components/MovieCarousel';
 import {
   fetchMovieDetails,
   fetchMovieCredits,
@@ -22,11 +22,21 @@ import {
   fetchRecommendedMovies,
   POSTER_BASE_URL,
 } from '../api/movies';
-import {useWatchlistStore} from '../store/useWatchlistStore';
-import {formatRuntime} from '../utils/sorting';
-import type {MovieListItem, WatchlistMovie} from '../types/tmdb';
-import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
-import type {HomeStackParamList} from '../navigation/HomeStack';
+import { useWatchlistStore } from '../store/useWatchlistStore';
+import { formatRuntime } from '../utils/sorting';
+import type { MovieListItem, WatchlistMovie } from '../types/tmdb';
+import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
+import type { HomeStackParamList } from '../navigation/HomeStack';
+import Svg, {Path} from 'react-native-svg';
+
+const BookmarkIcon = () => (
+  <Svg width={16} height={20} viewBox="0 0 16 20" fill="none">
+    <Path
+      d="M13.3789 0C14.3238 0 15.0906 0.777203 15.0908 1.69727V18.8643C15.0907 19.6489 14.6467 20 14.1914 20C13.9223 19.9999 13.6547 19.8794 13.3887 19.6523L8.21484 15.2461C8.05412 15.1088 7.82421 15.0304 7.58496 15.0303C7.34548 15.0303 7.11444 15.1082 6.9541 15.2451L1.7627 19.6533C1.49748 19.8799 1.21017 20 0.94043 20C0.65516 20.0001 0.388857 19.864 0.223633 19.627C0.0855771 19.4287 7.92182e-05 19.172 0 18.8643V1.69727C0.000287967 0.77736 0.829701 0.000265203 1.77441 0H13.3789Z"
+      fill="#FFFFFF"
+    />
+  </Svg>
+);
 
 type DetailsNavigationProp = StackNavigationProp<HomeStackParamList, 'Details'>;
 type DetailsRouteProp = RouteProp<HomeStackParamList, 'Details'>;
@@ -36,9 +46,10 @@ interface DetailsScreenProps {
   route: DetailsRouteProp;
 }
 
-const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
-  const {movieId, movieTitle} = route.params;
-  const {addToWatchlist, removeFromWatchlist, isInWatchlist} = useWatchlistStore();
+const DetailsScreen: React.FC<DetailsScreenProps> = ({ navigation, route }) => {
+  const { movieId, movieTitle } = route.params;
+  const { addToWatchlist, removeFromWatchlist, isInWatchlist } =
+    useWatchlistStore();
   const inWatchlist = isInWatchlist(movieId);
 
   const detailsQuery = useQuery({
@@ -91,11 +102,20 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
       };
       addToWatchlist(watchlistMovie);
     }
-  }, [detailsQuery.data, inWatchlist, movieId, addToWatchlist, removeFromWatchlist]);
+  }, [
+    detailsQuery.data,
+    inWatchlist,
+    movieId,
+    addToWatchlist,
+    removeFromWatchlist,
+  ]);
 
   const handleRecommendedPress = useCallback(
     (movie: MovieListItem) => {
-      navigation.push('Details', {movieId: movie.id, movieTitle: movie.title});
+      navigation.push('Details', {
+        movieId: movie.id,
+        movieTitle: movie.title,
+      });
     },
     [navigation],
   );
@@ -146,20 +166,19 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
   const runtime = formatRuntime(movie.runtime);
   const genreNames = movie.genres.map(g => g.name).join(', ');
   const languageName =
-    movie.spoken_languages.find(
-      l => l.iso_639_1 === movie.original_language,
-    )?.english_name ?? movie.original_language;
+    movie.spoken_languages.find(l => l.iso_639_1 === movie.original_language)
+      ?.english_name ?? movie.original_language;
 
   const directors =
     credits?.crew
       .filter(c => c.job === 'Director')
       .slice(0, 2)
-      .map(c => ({name: c.name, role: 'Director'})) ?? [];
+      .map(c => ({ name: c.name, role: 'Director' })) ?? [];
   const writers =
     credits?.crew
       .filter(c => c.department === 'Writing')
       .slice(0, Math.max(0, 3 - directors.length))
-      .map(c => ({name: c.name, role: c.job})) ?? [];
+      .map(c => ({ name: c.name, role: c.job })) ?? [];
   const keyCreatives = [...directors, ...writers].slice(0, 3);
 
   return (
@@ -174,14 +193,13 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
               onPress={handleBack}
               accessibilityRole="button"
               accessibilityLabel="Go back"
-              style={styles.backBtn}>
+              style={styles.backBtn}
+            >
               <Text style={styles.backChevron}>‹</Text>
             </TouchableOpacity>
             <View style={styles.titleContainer}>
               <Text style={styles.movieTitle}>{movieTitle}</Text>
-              {year ? (
-                <Text style={styles.movieYear}> ({year})</Text>
-              ) : null}
+              {year ? <Text style={styles.movieYear}> ({year})</Text> : null}
             </View>
             <View style={styles.backBtn} />
           </View>
@@ -190,7 +208,7 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
           <View style={styles.posterMetaRow}>
             {movie.poster_path ? (
               <Image
-                source={{uri: `${POSTER_BASE_URL}${movie.poster_path}`}}
+                source={{ uri: `${POSTER_BASE_URL}${movie.poster_path}` }}
                 style={styles.poster}
               />
             ) : (
@@ -203,7 +221,8 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
                 <Text style={styles.certText}>{cert}</Text>
               </View>
               <Text style={styles.metaText}>
-                {releaseFormatted} (SG){'  '}•{'  '}{runtime}
+                {releaseFormatted} (SG){'  '}•{'  '}
+                {runtime}
               </Text>
               <Text style={styles.metaText}>{genreNames}</Text>
               <Text style={styles.metaText}>
@@ -222,7 +241,9 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
         <View style={styles.lowerBlock}>
           {/* Row 3: score + key creatives (left-aligned) */}
           <View style={styles.scoreCreativesRow}>
-            <UserScoreCircle score={movie.vote_average} />
+            <View style={styles.scoreColumn}>
+              <UserScoreCircle score={movie.vote_average} />
+            </View>
             <View style={styles.creativesBlock}>
               {keyCreatives.map((c, i) => (
                 <View key={i} style={styles.creativeItem}>
@@ -244,14 +265,19 @@ const DetailsScreen: React.FC<DetailsScreenProps> = ({navigation, route}) => {
 
           {/* Watchlist button — narrow, outlined */}
           <TouchableOpacity
-            style={[styles.watchlistBtn, inWatchlist && styles.watchlistBtnActive]}
+            style={[
+              styles.watchlistBtn,
+              inWatchlist && styles.watchlistBtnActive,
+            ]}
             onPress={handleWatchlistToggle}
             accessibilityRole="button"
             accessibilityLabel={
               inWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'
-            }>
+            }
+          >
+            <BookmarkIcon />
             <Text style={styles.watchlistBtnText}>
-              🔖 {inWatchlist ? 'Remove from Watchlist' : 'Add To Watchlist'}
+              {inWatchlist ? 'Remove from Watchlist' : 'Add To Watchlist'}
             </Text>
           </TouchableOpacity>
         </View>
@@ -276,9 +302,9 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.background,
   },
-  // ── Upper block (cyan) ─────────────────────────────────────────────────────
+  // ── Upper block (dark navy) ────────────────────────────────────────────────
   upperBlock: {
-    backgroundColor: Colors.primary,
+    backgroundColor: Colors.detailsTop,
     padding: Spacing.lg,
   },
   titleRow: {
@@ -357,16 +383,18 @@ const styles = StyleSheet.create({
   metaLabel: {
     fontWeight: '700',
   },
-  // ── Lower block (dark navy) ────────────────────────────────────────────────
+  // ── Lower block (cyan) ────────────────────────────────────────────────────
   lowerBlock: {
-    backgroundColor: Colors.primaryDark,
+    backgroundColor: Colors.primary,
     padding: Spacing.lg,
   },
   scoreCreativesRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: Spacing.xl,
+    alignItems: 'center',
     marginBottom: Spacing.lg,
+  },
+  scoreColumn: {
+    width: '50%',
   },
   creativesBlock: {
     flex: 1,
@@ -387,7 +415,7 @@ const styles = StyleSheet.create({
   tagline: {
     fontStyle: 'italic',
     color: 'rgba(255,255,255,0.85)',
-    fontSize: FontSize.base,
+    fontSize: FontSize.lg,
     marginBottom: Spacing.md,
   },
   overviewHeading: {
@@ -407,11 +435,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1.5,
     borderColor: Colors.textOnDark,
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.lg,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing.xl,
     borderRadius: Radius.md,
     flexDirection: 'row',
     alignItems: 'center',
+    gap: Spacing.sm,
   },
   watchlistBtnActive: {
     opacity: 0.75,

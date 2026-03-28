@@ -8,6 +8,7 @@ interface PreferencesState {
   category: MovieCategory;
   sortOrder: SortOrder;
   sortDirection: SortDirection;
+  sortExplicitlySet: boolean;
   isHydrated: boolean;
   hydrate: () => Promise<void>;
   setCategory: (category: MovieCategory) => Promise<void>;
@@ -19,6 +20,7 @@ async function persist(state: {
   category: MovieCategory;
   sortOrder: SortOrder;
   sortDirection: SortDirection;
+  sortExplicitlySet: boolean;
 }): Promise<void> {
   try {
     await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -31,6 +33,7 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   category: 'now_playing',
   sortOrder: 'release_date',
   sortDirection: 'desc',
+  sortExplicitlySet: false,
   isHydrated: false,
 
   hydrate: async () => {
@@ -55,14 +58,14 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   },
 
   setSortOrder: async (sortOrder: SortOrder) => {
-    set({sortOrder});
+    set({sortOrder, sortExplicitlySet: true});
     const {category, sortDirection} = get();
-    await persist({category, sortOrder, sortDirection});
+    await persist({category, sortOrder, sortDirection, sortExplicitlySet: true});
   },
 
   setSortDirection: async (direction: SortDirection) => {
     set({sortDirection: direction});
-    const {category, sortOrder} = get();
-    await persist({category, sortOrder, sortDirection: direction});
+    const {category, sortOrder, sortExplicitlySet} = get();
+    await persist({category, sortOrder, sortDirection: direction, sortExplicitlySet});
   },
 }));

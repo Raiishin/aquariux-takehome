@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -48,7 +48,7 @@ const SORT_OPTIONS: {label: string; value: SortOrder}[] = [
 const ITEMS_PER_PAGE = 5;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const {category, sortOrder, sortDirection, setCategory, setSortOrder} =
+  const {category, sortOrder, sortDirection, sortExplicitlySet, isHydrated, setCategory, setSortOrder} =
     usePreferencesStore();
 
   const [searchInput, setSearchInput] = useState('');
@@ -58,6 +58,13 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
   const [sortDisplayValue, setSortDisplayValue] = useState<SortOrder | null>(null);
+
+  useEffect(() => {
+    if (isHydrated && sortExplicitlySet) {
+      setSortDisplayValue(sortOrder);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHydrated]);
 
   const {data, isLoading, isError, refetch} = useQuery({
     queryKey: ['movies', category, activeKeyword],

@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -11,21 +11,25 @@ import {
 
 const ChevronRight = () => <Text style={chevronStyle}>{'›'}</Text>;
 const ChevronDown = () => <Text style={chevronStyle}>{'⌄'}</Text>;
-const chevronStyle = {fontSize: 22, fontWeight: '700' as const, color: '#111827'};
-import {useQuery} from '@tanstack/react-query';
+const chevronStyle = {
+  fontSize: 22,
+  fontWeight: '700' as const,
+  color: '#111827',
+};
+import { useQuery } from '@tanstack/react-query';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {StackNavigationProp} from '@react-navigation/stack';
+import { StackNavigationProp } from '@react-navigation/stack';
 import AppHeader from '../components/AppHeader';
 import MovieCard from '../components/MovieCard';
 import SkeletonCard from '../components/SkeletonCard';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
-import {fetchMoviesByCategory, searchMoviesInCategory} from '../api/movies';
-import {usePreferencesStore} from '../store/usePreferencesStore';
-import {sortMovies} from '../utils/sorting';
-import type {MovieCategory, MovieListItem, SortOrder} from '../types/tmdb';
-import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
-import type {HomeStackParamList} from '../navigation/HomeStack';
+import { fetchMoviesByCategory, searchMoviesInCategory } from '../api/movies';
+import { usePreferencesStore } from '../store/usePreferencesStore';
+import { sortMovies } from '../utils/sorting';
+import type { MovieCategory, MovieListItem, SortOrder } from '../types/tmdb';
+import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
+import type { HomeStackParamList } from '../navigation/HomeStack';
 
 type HomeScreenNavigationProp = StackNavigationProp<HomeStackParamList, 'Home'>;
 
@@ -33,23 +37,30 @@ interface HomeScreenProps {
   navigation: HomeScreenNavigationProp;
 }
 
-const CATEGORIES: {label: string; value: MovieCategory}[] = [
-  {label: 'Now Playing', value: 'now_playing'},
-  {label: 'Upcoming', value: 'upcoming'},
-  {label: 'Popular', value: 'popular'},
+const CATEGORIES: { label: string; value: MovieCategory }[] = [
+  { label: 'Now Playing', value: 'now_playing' },
+  { label: 'Upcoming', value: 'upcoming' },
+  { label: 'Popular', value: 'popular' },
 ];
 
-const SORT_OPTIONS: {label: string; value: SortOrder}[] = [
-  {label: 'By alphabetical order', value: 'alphabetical'},
-  {label: 'By rating', value: 'rating'},
-  {label: 'By release date', value: 'release_date'},
+const SORT_OPTIONS: { label: string; value: SortOrder }[] = [
+  { label: 'By alphabetical order', value: 'alphabetical' },
+  { label: 'By rating', value: 'rating' },
+  { label: 'By release date', value: 'release_date' },
 ];
 
 const ITEMS_PER_PAGE = 5;
 
-const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const {category, sortOrder, sortDirection, sortExplicitlySet, isHydrated, setCategory, setSortOrder} =
-    usePreferencesStore();
+const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
+  const {
+    category,
+    sortOrder,
+    sortDirection,
+    sortExplicitlySet,
+    isHydrated,
+    setCategory,
+    setSortOrder,
+  } = usePreferencesStore();
 
   const [searchInput, setSearchInput] = useState('');
   const [activeKeyword, setActiveKeyword] = useState('');
@@ -57,16 +68,18 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const [categoryOpen, setCategoryOpen] = useState(false);
   const [sortOpen, setSortOpen] = useState(false);
-  const [sortDisplayValue, setSortDisplayValue] = useState<SortOrder | null>(null);
+  const [sortDisplayValue, setSortDisplayValue] = useState<SortOrder | null>(
+    null,
+  );
 
   useEffect(() => {
     if (isHydrated && sortExplicitlySet) {
       setSortDisplayValue(sortOrder);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHydrated]);
 
-  const {data, isLoading, isError, refetch} = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ['movies', category, activeKeyword],
     queryFn: () =>
       activeKeyword
@@ -89,7 +102,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
 
   const handleMoviePress = useCallback(
     (movie: MovieListItem) => {
-      navigation.navigate('Details', {movieId: movie.id, movieTitle: movie.title});
+      navigation.navigate('Details', {
+        movieId: movie.id,
+        movieTitle: movie.title,
+      });
     },
     [navigation],
   );
@@ -135,7 +151,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const handleSortOpen = useCallback(() => setCategoryOpen(false), []);
 
   const renderItem = useCallback<ListRenderItem<MovieListItem>>(
-    ({item}) => <MovieCard movie={item} onPress={handleMoviePress} />,
+    ({ item }) => <MovieCard movie={item} onPress={handleMoviePress} />,
     [handleMoviePress],
   );
 
@@ -151,7 +167,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
         style={styles.loadMoreBtn}
         onPress={handleLoadMore}
         accessibilityRole="button"
-        accessibilityLabel="Load more movies">
+        accessibilityLabel="Load more movies"
+      >
         <Text style={styles.loadMoreText}>Load More</Text>
       </TouchableOpacity>
     );
@@ -161,7 +178,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
     if (isLoading) {
       return (
         <>
-          {Array.from({length: 5}).map((_, i) => (
+          {Array.from({ length: 5 }).map((_, i) => (
             <SkeletonCard key={i} />
           ))}
         </>
@@ -197,7 +214,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             setOpen={setCategoryOpen}
             onOpen={handleCategoryOpen}
             value={category}
-            setValue={(cb) => {
+            setValue={cb => {
               const val = typeof cb === 'function' ? cb(category) : cb;
               handleCategoryChange(val);
             }}
@@ -218,7 +235,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
             setOpen={setSortOpen}
             onOpen={handleSortOpen}
             value={sortDisplayValue}
-            setValue={(cb) => {
+            setValue={cb => {
               const val = typeof cb === 'function' ? cb(sortDisplayValue) : cb;
               handleSortChange(val);
             }}
@@ -247,7 +264,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
           style={styles.searchBtn}
           onPress={handleSearch}
           accessibilityRole="button"
-          accessibilityLabel="Search">
+          accessibilityLabel="Search"
+        >
           <Text style={styles.searchBtnText}>Search</Text>
         </TouchableOpacity>
       </View>

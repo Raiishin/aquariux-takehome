@@ -1,4 +1,4 @@
-import type {MovieListItem, SortOrder, SortDirection} from '../types/tmdb';
+import type { MovieListItem, SortOrder, SortDirection } from '../types/tmdb';
 
 export function sortMovies<T extends MovieListItem>(
   movies: T[],

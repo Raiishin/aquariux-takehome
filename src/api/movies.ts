@@ -18,7 +18,7 @@ export async function fetchMoviesByCategory(
 ): Promise<PaginatedResponse<MovieListItem>> {
   const response = await apiClient.get<PaginatedResponse<MovieListItem>>(
     `/movie/${category}`,
-    {params: {page}},
+    { params: { page } },
   );
   return response.data;
 }
@@ -30,7 +30,7 @@ export async function searchMoviesInCategory(
 ): Promise<PaginatedResponse<MovieListItem>> {
   const response = await apiClient.get<PaginatedResponse<MovieListItem>>(
     `/movie/${category}`,
-    {params: {page}},
+    { params: { page } },
   );
   const lower = keyword.toLowerCase();
   const filtered = response.data.results.filter(
@@ -38,20 +38,28 @@ export async function searchMoviesInCategory(
       movie.title.toLowerCase().includes(lower) ||
       movie.overview.toLowerCase().includes(lower),
   );
-  return {...response.data, results: filtered};
+  return { ...response.data, results: filtered };
 }
 
-export async function fetchMovieDetails(movieId: number): Promise<MovieDetails> {
+export async function fetchMovieDetails(
+  movieId: number,
+): Promise<MovieDetails> {
   const response = await apiClient.get<MovieDetails>(`/movie/${movieId}`);
   return response.data;
 }
 
-export async function fetchMovieCredits(movieId: number): Promise<MovieCredits> {
-  const response = await apiClient.get<MovieCredits>(`/movie/${movieId}/credits`);
+export async function fetchMovieCredits(
+  movieId: number,
+): Promise<MovieCredits> {
+  const response = await apiClient.get<MovieCredits>(
+    `/movie/${movieId}/credits`,
+  );
   return response.data;
 }
 
-export async function fetchMovieCertification(movieId: number): Promise<string> {
+export async function fetchMovieCertification(
+  movieId: number,
+): Promise<string> {
   const response = await apiClient.get<ReleaseDatesResponse>(
     `/movie/${movieId}/release_dates`,
   );

@@ -1,6 +1,6 @@
-import {createMMKV} from 'react-native-mmkv';
+import { createMMKV } from 'react-native-mmkv';
 
-export const storage = createMMKV({id: 'moviedb-storage'});
+export const storage = createMMKV({ id: 'moviedb-storage' });
 
 export function storageGet<T>(key: string): T | undefined {
   const raw = storage.getString(key);

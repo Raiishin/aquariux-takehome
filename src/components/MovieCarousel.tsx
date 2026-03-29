@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, { useCallback } from 'react';
 import {
   FlatList,
   Image,
@@ -8,18 +8,18 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type {CastMember, MovieListItem} from '../types/tmdb';
-import {POSTER_BASE_URL} from '../api/movies';
-import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
+import type { CastMember, MovieListItem } from '../types/tmdb';
+import { POSTER_BASE_URL } from '../api/movies';
+import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
 import CastCard from './CastCard';
 
 interface CastCarouselProps {
   cast: CastMember[];
 }
 
-export const CastCarousel: React.FC<CastCarouselProps> = ({cast}) => {
+export const CastCarousel: React.FC<CastCarouselProps> = ({ cast }) => {
   const renderItem = useCallback<ListRenderItem<CastMember>>(
-    ({item}) => <CastCard member={item} />,
+    ({ item }) => <CastCard member={item} />,
     [],
   );
 
@@ -56,17 +56,18 @@ export const RecommendedCarousel: React.FC<RecommendedCarouselProps> = ({
   onMoviePress,
 }) => {
   const renderItem = useCallback<ListRenderItem<MovieListItem>>(
-    ({item}) => {
+    ({ item }) => {
       const percentage = Math.round(item.vote_average * 10);
       return (
         <TouchableOpacity
           style={styles.recCard}
           onPress={() => onMoviePress(item)}
           accessibilityRole="button"
-          accessibilityLabel={`View details for ${item.title}`}>
+          accessibilityLabel={`View details for ${item.title}`}
+        >
           {item.poster_path ? (
             <Image
-              source={{uri: `${POSTER_BASE_URL}${item.poster_path}`}}
+              source={{ uri: `${POSTER_BASE_URL}${item.poster_path}` }}
               style={styles.recPoster}
             />
           ) : (
@@ -132,7 +133,7 @@ const styles = StyleSheet.create({
     borderRadius: Radius.md,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.12,
     shadowRadius: 4,
     elevation: 3,

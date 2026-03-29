@@ -1,12 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {Colors, Spacing} from '../theme/tokens';
+import { StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Colors, Spacing } from '../theme/tokens';
 
 const AppHeader: React.FC = () => {
   const insets = useSafeAreaInsets();
   return (
-    <View style={[styles.container, {paddingTop: insets.top + Spacing.sm}]}>
+    <View style={[styles.container, { paddingTop: insets.top + Spacing.sm }]}>
       <View style={styles.logoWrapper}>
         <Text style={styles.theText}>THE</Text>
         <View style={styles.row}>

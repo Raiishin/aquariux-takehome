@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {TMDB_READ_ACCESS_TOKEN} from '@env';
+import { TMDB_READ_ACCESS_TOKEN } from '@env';
 
 const apiClient = axios.create({
   baseURL: 'https://api.themoviedb.org/3',

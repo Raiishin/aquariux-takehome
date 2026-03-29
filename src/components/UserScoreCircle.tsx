@@ -1,7 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import Svg, {Circle} from 'react-native-svg';
-import {Colors, FontSize} from '../theme/tokens';
+import { StyleSheet, Text, View } from 'react-native';
+import Svg, { Circle } from 'react-native-svg';
+import { Colors, FontSize } from '../theme/tokens';
 
 interface UserScoreCircleProps {
   score: number;
@@ -13,7 +13,7 @@ const STROKE_WIDTH = 5;
 const RADIUS = CENTER - STROKE_WIDTH / 2;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const UserScoreCircle: React.FC<UserScoreCircleProps> = ({score}) => {
+const UserScoreCircle: React.FC<UserScoreCircleProps> = ({ score }) => {
   const percentage = Math.round(score * 10);
   const arcColor =
     percentage >= 70

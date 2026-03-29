@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import {
   FlatList,
   ListRenderItem,
@@ -8,44 +8,57 @@ import {
   View,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {CompositeNavigationProp, useNavigation} from '@react-navigation/native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {StackNavigationProp} from '@react-navigation/stack';
+import {
+  CompositeNavigationProp,
+  useNavigation,
+} from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { StackNavigationProp } from '@react-navigation/stack';
 import AppHeader from '../components/AppHeader';
 import MovieCard from '../components/MovieCard';
 import EmptyState from '../components/EmptyState';
-import {useWatchlistStore} from '../store/useWatchlistStore';
-import {sortMovies} from '../utils/sorting';
-import type {MovieListItem, SortOrder, SortDirection, WatchlistMovie} from '../types/tmdb';
-import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
-import type {RootTabParamList} from '../navigation/RootNavigator';
-import type {HomeStackParamList} from '../navigation/HomeStack';
+import { useWatchlistStore } from '../store/useWatchlistStore';
+import { sortMovies } from '../utils/sorting';
+import type { MovieListItem, SortOrder, WatchlistMovie } from '../types/tmdb';
+import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
+import type { RootTabParamList } from '../navigation/RootNavigator';
+import type { HomeStackParamList } from '../navigation/HomeStack';
 
 type WatchlistNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootTabParamList, 'WatchlistTab'>,
   StackNavigationProp<HomeStackParamList>
 >;
 
-const SORT_OPTIONS: {label: string; value: SortOrder}[] = [
-  {label: 'By rating', value: 'rating'},
-  {label: 'By alphabetical order', value: 'alphabetical'},
-  {label: 'By release date', value: 'release_date'},
+const SORT_OPTIONS: { label: string; value: SortOrder }[] = [
+  { label: 'By rating', value: 'rating' },
+  { label: 'By alphabetical order', value: 'alphabetical' },
+  { label: 'By release date', value: 'release_date' },
 ];
 
 const WatchlistScreen: React.FC = () => {
   const navigation = useNavigation<WatchlistNavigationProp>();
-  const {watchlist, removeFromWatchlist, sortOrder: filterOrder, sortDirection: direction, setSortOrder, setSortDirection} = useWatchlistStore();
+  const {
+    watchlist,
+    removeFromWatchlist,
+    sortOrder: filterOrder,
+    sortDirection: direction,
+    setSortOrder,
+    setSortDirection,
+  } = useWatchlistStore();
 
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const memberSince = useMemo(() => {
     if (watchlist.length === 0) {
       const now = new Date();
-      return now.toLocaleDateString('en-GB', {month: 'long', year: 'numeric'});
+      return now.toLocaleDateString('en-GB', {
+        month: 'long',
+        year: 'numeric',
+      });
     }
     const oldest = Math.min(...watchlist.map(m => m.addedAt));
     const date = new Date(oldest);
-    return date.toLocaleDateString('en-GB', {month: 'long', year: 'numeric'});
+    return date.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
   }, [watchlist]);
 
   const sortedWatchlist = useMemo(
@@ -54,14 +67,14 @@ const WatchlistScreen: React.FC = () => {
   );
 
   const handleBack = useCallback(() => {
-    navigation.navigate('HomeTab', {screen: 'Home'});
+    navigation.navigate('HomeTab', { screen: 'Home' });
   }, [navigation]);
 
   const handleMoviePress = useCallback(
     (movie: MovieListItem) => {
       navigation.navigate('HomeTab', {
         screen: 'Details',
-        params: {movieId: movie.id, movieTitle: movie.title},
+        params: { movieId: movie.id, movieTitle: movie.title },
       });
     },
     [navigation],
@@ -79,7 +92,7 @@ const WatchlistScreen: React.FC = () => {
   }, [direction, setSortDirection]);
 
   const renderItem = useCallback<ListRenderItem<WatchlistMovie>>(
-    ({item}) => (
+    ({ item }) => (
       <MovieCard
         movie={item}
         onPress={handleMoviePress}
@@ -103,7 +116,8 @@ const WatchlistScreen: React.FC = () => {
           style={styles.backBtn}
           onPress={handleBack}
           accessibilityRole="button"
-          accessibilityLabel="Go to Home">
+          accessibilityLabel="Go to Home"
+        >
           <Text style={styles.backChevron}>‹</Text>
         </TouchableOpacity>
         <View style={styles.profileRow}>
@@ -127,7 +141,7 @@ const WatchlistScreen: React.FC = () => {
               open={dropdownOpen}
               setOpen={setDropdownOpen}
               value={filterOrder}
-              setValue={(cb) => {
+              setValue={cb => {
                 const val = typeof cb === 'function' ? cb(filterOrder) : cb;
                 if (val) setSortOrder(val);
               }}
@@ -145,7 +159,10 @@ const WatchlistScreen: React.FC = () => {
             style={styles.orderBtn}
             onPress={handleToggleDirection}
             accessibilityRole="button"
-            accessibilityLabel={`Sort direction: ${direction === 'asc' ? 'ascending' : 'descending'}`}>
+            accessibilityLabel={`Sort direction: ${
+              direction === 'asc' ? 'ascending' : 'descending'
+            }`}
+          >
             <Text style={styles.orderBtnText}>
               {direction === 'asc' ? '↑' : '↓'}
             </Text>

@@ -28,7 +28,7 @@ import { formatRuntime } from '../utils/sorting';
 import type { MovieListItem, WatchlistMovie } from '../types/tmdb';
 import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
 import type { HomeStackParamList } from '../navigation/HomeStack';
-import Svg, {Path} from 'react-native-svg';
+import Svg, { Path } from 'react-native-svg';
 
 const BookmarkIcon = () => (
   <Svg width={16} height={20} viewBox="0 0 16 20" fill="none">

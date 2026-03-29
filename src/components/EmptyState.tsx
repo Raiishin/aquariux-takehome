@@ -1,13 +1,13 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
-import {Colors, FontSize, Spacing} from '../theme/tokens';
+import { StyleSheet, Text, View } from 'react-native';
+import { Colors, FontSize, Spacing } from '../theme/tokens';
 
 interface EmptyStateProps {
   message: string;
   subMessage?: string;
 }
 
-const EmptyState: React.FC<EmptyStateProps> = ({message, subMessage}) => {
+const EmptyState: React.FC<EmptyStateProps> = ({ message, subMessage }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>🎬</Text>

@@ -1,25 +1,23 @@
-import React, {useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
   withTiming,
 } from 'react-native-reanimated';
-import {Colors, Radius, Spacing} from '../theme/tokens';
+import { Colors, Radius, Spacing } from '../theme/tokens';
 
-const SkeletonBox: React.FC<{style: object}> = ({style}) => {
+const SkeletonBox: React.FC<{ style: object }> = ({ style }) => {
   const opacity = useSharedValue(1);
 
   useEffect(() => {
-    opacity.value = withRepeat(withTiming(0.35, {duration: 750}), -1, true);
+    opacity.value = withRepeat(withTiming(0.35, { duration: 750 }), -1, true);
   }, [opacity]);
 
-  const animatedStyle = useAnimatedStyle(() => ({opacity: opacity.value}));
+  const animatedStyle = useAnimatedStyle(() => ({ opacity: opacity.value }));
 
-  return (
-    <Animated.View style={[styles.box, style, animatedStyle]} />
-  );
+  return <Animated.View style={[styles.box, style, animatedStyle]} />;
 };
 
 const SkeletonCard: React.FC = () => (
@@ -45,7 +43,7 @@ const styles = StyleSheet.create({
     marginVertical: Spacing.sm,
     overflow: 'hidden',
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 3,

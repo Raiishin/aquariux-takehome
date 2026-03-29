@@ -1,16 +1,10 @@
-import React, {useCallback} from 'react';
-import {
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Animated, {FadeInDown} from 'react-native-reanimated';
-import type {MovieListItem} from '../types/tmdb';
-import {POSTER_BASE_URL} from '../api/movies';
-import {Colors, FontSize, Radius, Spacing} from '../theme/tokens';
-import {formatReleaseDate} from '../utils/sorting';
+import React, { useCallback } from 'react';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import type { MovieListItem } from '../types/tmdb';
+import { POSTER_BASE_URL } from '../api/movies';
+import { Colors, FontSize, Radius, Spacing } from '../theme/tokens';
+import { formatReleaseDate } from '../utils/sorting';
 
 interface MovieCardProps {
   movie: MovieListItem;
@@ -19,7 +13,7 @@ interface MovieCardProps {
 }
 
 const MovieCard: React.FC<MovieCardProps> = React.memo(
-  ({movie, onPress, onRemove}) => {
+  ({ movie, onPress, onRemove }) => {
     const handlePress = useCallback(() => {
       onPress(movie);
     }, [movie, onPress]);
@@ -30,40 +24,44 @@ const MovieCard: React.FC<MovieCardProps> = React.memo(
 
     return (
       <Animated.View entering={FadeInDown.duration(350).springify()}>
-      <TouchableOpacity
-        style={styles.card}
-        onPress={handlePress}
-        accessibilityRole="button"
-        accessibilityLabel={`View details for ${movie.title}`}>
-        {movie.poster_path ? (
-          <Image
-            source={{uri: `${POSTER_BASE_URL}${movie.poster_path}`}}
-            style={styles.poster}
-          />
-        ) : (
-          <View style={[styles.poster, styles.posterPlaceholder]}>
-            <Text style={styles.posterPlaceholderText}>🎬</Text>
+        <TouchableOpacity
+          style={styles.card}
+          onPress={handlePress}
+          accessibilityRole="button"
+          accessibilityLabel={`View details for ${movie.title}`}
+        >
+          {movie.poster_path ? (
+            <Image
+              source={{ uri: `${POSTER_BASE_URL}${movie.poster_path}` }}
+              style={styles.poster}
+            />
+          ) : (
+            <View style={[styles.poster, styles.posterPlaceholder]}>
+              <Text style={styles.posterPlaceholderText}>🎬</Text>
+            </View>
+          )}
+          <View style={styles.content}>
+            <Text style={styles.title} numberOfLines={2}>
+              {movie.title}
+            </Text>
+            <Text style={styles.date}>
+              {formatReleaseDate(movie.release_date)}
+            </Text>
+            <Text style={styles.overview} numberOfLines={3}>
+              {movie.overview}
+            </Text>
           </View>
-        )}
-        <View style={styles.content}>
-          <Text style={styles.title} numberOfLines={2}>
-            {movie.title}
-          </Text>
-          <Text style={styles.date}>{formatReleaseDate(movie.release_date)}</Text>
-          <Text style={styles.overview} numberOfLines={3}>
-            {movie.overview}
-          </Text>
-        </View>
-        {onRemove && (
-          <TouchableOpacity
-            style={styles.removeBtn}
-            onPress={handleRemove}
-            accessibilityRole="button"
-            accessibilityLabel={`Remove ${movie.title} from watchlist`}>
-            <Text style={styles.removeBtnText}>✕</Text>
-          </TouchableOpacity>
-        )}
-      </TouchableOpacity>
+          {onRemove && (
+            <TouchableOpacity
+              style={styles.removeBtn}
+              onPress={handleRemove}
+              accessibilityRole="button"
+              accessibilityLabel={`Remove ${movie.title} from watchlist`}
+            >
+              <Text style={styles.removeBtnText}>✕</Text>
+            </TouchableOpacity>
+          )}
+        </TouchableOpacity>
       </Animated.View>
     );
   },
@@ -79,7 +77,7 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.lg,
     marginVertical: Spacing.sm,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.08,
     shadowRadius: 4,
     elevation: 3,

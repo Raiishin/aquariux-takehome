@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import type {MovieCategory, SortOrder, SortDirection} from '../types/tmdb';
-import {storageGet, storageSet} from './storage';
+import { create } from 'zustand';
+import type { MovieCategory, SortOrder, SortDirection } from '../types/tmdb';
+import { storageGet, storageSet } from './storage';
 
 const STORAGE_KEY = 'moviedb_preferences';
 
@@ -26,27 +26,42 @@ export const usePreferencesStore = create<PreferencesState>((set, get) => ({
   hydrate: () => {
     const parsed = storageGet<Partial<PreferencesState>>(STORAGE_KEY);
     if (parsed) {
-      set({...parsed, isHydrated: true});
+      set({ ...parsed, isHydrated: true });
     } else {
-      set({isHydrated: true});
+      set({ isHydrated: true });
     }
   },
 
   setCategory: (category: MovieCategory) => {
-    set({category});
-    const {sortOrder, sortDirection, sortExplicitlySet} = get();
-    storageSet(STORAGE_KEY, {category, sortOrder, sortDirection, sortExplicitlySet});
+    set({ category });
+    const { sortOrder, sortDirection, sortExplicitlySet } = get();
+    storageSet(STORAGE_KEY, {
+      category,
+      sortOrder,
+      sortDirection,
+      sortExplicitlySet,
+    });
   },
 
   setSortOrder: (sortOrder: SortOrder) => {
-    set({sortOrder, sortExplicitlySet: true});
-    const {category, sortDirection} = get();
-    storageSet(STORAGE_KEY, {category, sortOrder, sortDirection, sortExplicitlySet: true});
+    set({ sortOrder, sortExplicitlySet: true });
+    const { category, sortDirection } = get();
+    storageSet(STORAGE_KEY, {
+      category,
+      sortOrder,
+      sortDirection,
+      sortExplicitlySet: true,
+    });
   },
 
   setSortDirection: (direction: SortDirection) => {
-    set({sortDirection: direction});
-    const {category, sortOrder, sortExplicitlySet} = get();
-    storageSet(STORAGE_KEY, {category, sortOrder, sortDirection: direction, sortExplicitlySet});
+    set({ sortDirection: direction });
+    const { category, sortOrder, sortExplicitlySet } = get();
+    storageSet(STORAGE_KEY, {
+      category,
+      sortOrder,
+      sortDirection: direction,
+      sortExplicitlySet,
+    });
   },
 }));
